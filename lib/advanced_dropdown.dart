@@ -48,7 +48,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
   void _toggleDropdown() {
     if (_overlayEntry == null) {
       _overlayEntry = _createOverlayEntry();
-      Overlay.of(context)?.insert(_overlayEntry!);
+      Overlay.of(context).insert(_overlayEntry!);
     } else {
       _closeDropdown();
     }
@@ -64,7 +64,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
   void _rebuildDropdown() {
     _overlayEntry?.remove();
     _overlayEntry = _createOverlayEntry();
-    Overlay.of(context)?.insert(_overlayEntry!);
+    Overlay.of(context).insert(_overlayEntry!);
   }
 
   /// Creates the dropdown popup using OverlayEntry
