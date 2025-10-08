@@ -1,0 +1,31 @@
+name: advanced_dropdown
+description: A customizable Flutter dropdown with search, single-select, and multi-select support.
+version: 1.0.4
+homepage: https://github.com/Masrafi/advanced_dropdown
+repository: https://github.com/Masrafi/advanced_dropdown
+issue_tracker: https://github.com/Masrafi/advanced_dropdown/issues
+documentation: https://pub.dev/Masrafi/advanced_dropdown/latest/
+
+
+environment:
+  sdk: ^3.9.0
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+
+topics:
+  - dropdown
+  - flutter-widget
+  - ui-components
+  - custom-widget
+  - reusable-ui
