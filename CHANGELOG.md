@@ -40,6 +40,15 @@
 
 ## 1.0.5
 
+🛠 **What new!!**
+- Dropdown popup overlaps the dropdown button
+- Checkbox does not reflect selection on first tap
+- Add "OK" button for multi-select dropdown
+
+---
+
+## 1.0.6
+
 🛠 **Upcoming improvements**
 - [ ] Add generic type support (`CustomDropdown<T>`)
 - [ ] Improve dropdown positioning (auto adjust above if bottom overflow)
