@@ -12,6 +12,7 @@ class CustomDropdown extends StatefulWidget {
   final InputDecoration? inputDecoration; // Decoration for search field
   final BoxDecoration? decoration; // Decoration for main dropdown button
   final BoxDecoration? dropdownDecoration; // Decoration for the popup dropdown
+  final Icon? icon;
 
   const CustomDropdown({
     super.key,
@@ -22,6 +23,7 @@ class CustomDropdown extends StatefulWidget {
     this.inputDecoration,
     this.decoration,
     this.dropdownDecoration,
+    this.icon
   });
 
   @override
@@ -238,7 +240,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
                 ),
               ),
               // Dropdown icon
-              const Icon(Icons.arrow_drop_down),
+              widget.icon == null ? const Icon(Icons.arrow_drop_down) : widget.icon!,
             ],
           ),
         ),

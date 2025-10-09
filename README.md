@@ -37,3 +37,5 @@ Lightweight, flexible, and easy to integrate into any Flutter project.
 ✅ **Auto position below the button**  
 ✅ **Lightweight (~3 KB compressed)**  
 ✅ **No external dependencies**
+✅ **Custom Dropdown Button Design**
+✅ **Custom Dropdown Icon**
