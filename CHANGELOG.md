@@ -63,6 +63,13 @@
 
 ## 1.0.8
 
+🛠 **What new!!**
+- Update documentation
+
+---
+
+## 1.0.9
+
 🛠 **Upcoming improvements**
 - [ ] Add generic type support (`CustomDropdown<T>`)
 - [ ] Improve dropdown positioning (auto adjust above if bottom overflow)
