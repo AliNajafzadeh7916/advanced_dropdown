@@ -76,6 +76,13 @@
 
 ---
 
+## 2.0.1
+
+🛠 **What new!!**
+- Added documentation
+
+---
+
 ## 2.0.2
 
 🛠 **Upcoming improvements**

@@ -26,7 +26,7 @@ import 'package:flutter/material.dart';
 /// )
 /// ```
 /// ------------------------------------------------------------
-class CustomDropdown extends StatefulWidget {
+class AdvancedDropdown extends StatefulWidget {
   /// The list of items to show in the dropdown
   final List<String> items;
 
@@ -63,7 +63,7 @@ class CustomDropdown extends StatefulWidget {
   /// Remove (×) icon color for chips
   final Color chipRemoveIconColor;
 
-  const CustomDropdown({
+  const AdvancedDropdown({
     super.key,
     required this.items,
     required this.onChanged,
@@ -80,10 +80,10 @@ class CustomDropdown extends StatefulWidget {
   });
 
   @override
-  State<CustomDropdown> createState() => _CustomDropdownState();
+  State<AdvancedDropdown> createState() => _AdvancedDropdownState();
 }
 
-class _CustomDropdownState extends State<CustomDropdown> {
+class _AdvancedDropdownState extends State<AdvancedDropdown> {
   final LayerLink _layerLink = LayerLink(); // For positioning the dropdown
   OverlayEntry? _overlayEntry;
 

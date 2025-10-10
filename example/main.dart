@@ -57,21 +57,31 @@ class _ExampleDropdownState extends State<ExampleDropdown> {
         child: ListView(
           children: [
             const Text('1️⃣ Default Dropdown (single select)'),
-            CustomDropdown(
+            AdvancedDropdown(
               items: fruits,
               onChanged: (value) => setState(() => defaultSelected = value),
             ),
 
 
             const Text('2️⃣ Single Select Dropdown'),
-            CustomDropdown(
+            AdvancedDropdown(
               items: fruits,
               onChanged: (value) => setState(() => singleSelected = value),
             ),
 
 
             const Text('3️⃣ Multi Select Dropdown'),
-            CustomDropdown(
+            AdvancedDropdown(
+              items: fruits,
+              isMultiSelect: true,
+              onChanged: (values) => setState(() => multiSelected = List<String>.from(values)),
+            ),            
+            
+            const Text('3️⃣ Multi Select Dropdown Custom Decoration'),
+            AdvancedDropdown(
+              chipColor: Color(0xFFD0E6FF),
+              chipTextColor: Colors.deepPurple,
+              chipRemoveIconColor: Colors.redAccent,
               items: fruits,
               isMultiSelect: true,
               onChanged: (values) => setState(() => multiSelected = List<String>.from(values)),
@@ -79,7 +89,7 @@ class _ExampleDropdownState extends State<ExampleDropdown> {
             
             
             const Text('4️⃣ Searchable Dropdown (single)'),
-            CustomDropdown(
+            AdvancedDropdown(
               items: fruits,
               isSearch: true,
               onChanged: (value) => setState(() => decoratedSelected = value),
@@ -87,7 +97,7 @@ class _ExampleDropdownState extends State<ExampleDropdown> {
             
             
             const Text('5️⃣ Searchable Dropdown (multi)'),
-            CustomDropdown(
+            AdvancedDropdown(
               items: fruits,
               isSearch: true,
               isMultiSelect: true,
@@ -96,7 +106,7 @@ class _ExampleDropdownState extends State<ExampleDropdown> {
             
             
             const Text('6️⃣ Custom Decorated Dropdown'),
-            CustomDropdown(
+            AdvancedDropdown(
               items: fruits,
               isSearch: true,
               isMultiSelect: true,
