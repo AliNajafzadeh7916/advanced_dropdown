@@ -76,18 +76,14 @@
 
 ---
 
-## 2.0.1
+## 2.0.2
 
 🛠 **What new!!**
 - Added documentation
 
 ---
 
-## 2.0.2
+## 2.0.3
 
-🛠 **Upcoming improvements**
-- [ ] Add generic type support (`CustomDropdown<T>`)
-- [ ] Improve dropdown positioning (auto adjust above if bottom overflow)
-- [ ] Add keyboard navigation and better focus handling
-- [ ] Add animation on open/close
-- [ ] Add dark mode adaptation
+🛠 **What new!!**
+- Make the dropdown content dynamic

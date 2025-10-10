@@ -1,140 +1,134 @@
-import 'package:advanced_dropdown/advanced_dropdown.dart';
 import 'package:flutter/material.dart';
+import 'package:advanced_dropdown/advanced_dropdown.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class AdvancedDropdownDemo extends StatefulWidget {
+  const AdvancedDropdownDemo({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Custom Dropdown Example',
-      home: Scaffold(
-        appBar: AppBar(title: const Text('Dropdown Example')),
-        body: const Padding(
-          padding: EdgeInsets.all(16.0),
-          child: ExampleDropdown(),
-        ),
-      ),
-    );
-  }
+  State<AdvancedDropdownDemo> createState() => _AdvancedDropdownDemoState();
 }
 
-class ExampleDropdown extends StatefulWidget {
-  const ExampleDropdown({super.key});
+class _AdvancedDropdownDemoState extends State<AdvancedDropdownDemo> {
+  // Example data sources
+  final List<Map<String, dynamic>> techList = [
+    {'id': 1, 'name': 'Flutter'},
+    {'id': 2, 'name': 'React'},
+    {'id': 3, 'name': 'Vue'},
+    {'id': 4, 'name': 'Angular'},
+  ];
 
-  @override
-  State<ExampleDropdown> createState() => _ExampleDropdownState();
-}
-
-class _ExampleDropdownState extends State<ExampleDropdown> {
-  String? defaultSelected;
-  String? singleSelected;
-  List<String> multiSelected = [];
-  String? decoratedSelected;
-  List<String> searchSelected = [];
-
-  final fruits = [
-    'Apple',
-    'Banana',
-    'Orange',
-    'Mango',
-    'Pineapple',
-    'Grapes',
-    'Kiwi',
-    'Strawberry',
+  final List<String> countryList = [
+    'Bangladesh',
+    'India',
+    'USA',
+    'Canada',
+    'Germany',
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Advanced Dropdown Demo')),
-      body: Padding(
+      appBar: AppBar(title: const Text("Advanced Dropdown Example")),
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        child: ListView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('1️⃣ Default Dropdown (single select)'),
+            /// 🔹 Single Select (with API data)
+            const Text("Single Select (API data)", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
             AdvancedDropdown(
-              items: fruits,
-              onChanged: (value) => setState(() => defaultSelected = value),
-            ),
-
-
-            const Text('2️⃣ Single Select Dropdown'),
-            AdvancedDropdown(
-              items: fruits,
-              onChanged: (value) => setState(() => singleSelected = value),
-            ),
-
-
-            const Text('3️⃣ Multi Select Dropdown'),
-            AdvancedDropdown(
-              items: fruits,
-              isMultiSelect: true,
-              onChanged: (values) => setState(() => multiSelected = List<String>.from(values)),
-            ),            
-            
-            const Text('3️⃣ Multi Select Dropdown Custom Decoration'),
-            AdvancedDropdown(
-              chipColor: Color(0xFFD0E6FF),
-              chipTextColor: Colors.deepPurple,
-              chipRemoveIconColor: Colors.redAccent,
-              items: fruits,
-              isMultiSelect: true,
-              onChanged: (values) => setState(() => multiSelected = List<String>.from(values)),
-            ),
-            
-            
-            const Text('4️⃣ Searchable Dropdown (single)'),
-            AdvancedDropdown(
-              items: fruits,
-              isSearch: true,
-              onChanged: (value) => setState(() => decoratedSelected = value),
-            ),
-            
-            
-            const Text('5️⃣ Searchable Dropdown (multi)'),
-            AdvancedDropdown(
-              items: fruits,
-              isSearch: true,
-              isMultiSelect: true,
-              onChanged: (values) => setState(() => searchSelected = List<String>.from(values)),
-            ),
-            
-            
-            const Text('6️⃣ Custom Decorated Dropdown'),
-            AdvancedDropdown(
-              items: fruits,
-              isSearch: true,
-              isMultiSelect: true,
+              items: techList,
+              displayField: 'name',
+              valueField: 'id',
+              initialValue: 2,
+              onChanged: (value) {
+                debugPrint("Selected ID: $value");
+              },
               decoration: BoxDecoration(
-                color: Colors.purple.shade50,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.purple, width: 2),
+                color: Colors.white,
+                border: Border.all(color: Colors.blue.shade200),
+                borderRadius: BorderRadius.circular(8),
               ),
+              selectedTextStyle: const TextStyle(fontSize: 15, color: Colors.black87),
+            ),
+
+            const SizedBox(height: 25),
+
+            /// 🔹 Multi Select with Chips + Max Limit
+            const Text("Multi Select with Chips & Limit", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            AdvancedDropdown(
+              items: techList,
+              displayField: 'name',
+              valueField: 'id',
+              isMultiSelect: true,
+              isSearch: true,
+              maxSelection: 3,
+              initialValues: [1, 3], // preselected (backend)
+              chipColor: Colors.blue.shade100,
+              chipTextStyle: const TextStyle(color: Colors.black),
+              onChanged: (values) {
+                debugPrint("Selected IDs: $values");
+              },
               dropdownDecoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.purple.withValues(alpha: 0.3),
-                    blurRadius: 5,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.grey.shade300),
               ),
+              icon: const Icon(Icons.expand_more, color: Colors.blue),
+            ),
+
+            const SizedBox(height: 25),
+
+            /// 🔹 String List (simple dropdown)
+            const Text("Simple String List", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            AdvancedDropdown(
+              items: countryList,
+              isSearch: true,
+              hintText: "Select a country",
+              onChanged: (value) {
+                debugPrint("Selected Country: $value");
+              },
               inputDecoration: const InputDecoration(
-                hintText: 'Search fruits...',
+                hintText: 'Search country...',
+                prefixIcon: Icon(Icons.search),
                 border: OutlineInputBorder(),
                 isDense: true,
               ),
-              onChanged: (values) => setState(() => searchSelected = List<String>.from(values)),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: Colors.grey.shade400),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              selectedTextStyle: const TextStyle(color: Colors.black87, fontSize: 15),
             ),
-            
-           
+
+            const SizedBox(height: 25),
+
+            // 🔹 Custom Styled Multi Select
+            const Text("Custom Styled Dropdown", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            AdvancedDropdown(
+              items: techList,
+              displayField: 'name',
+              valueField: 'id',
+              isMultiSelect: true,
+              isSearch: true,
+              chipColor: Colors.teal.shade100,
+              chipTextStyle: const TextStyle(color: Colors.teal),
+              maxSelection: 4,
+              inputDecoration: const InputDecoration(
+                hintText: 'Search technologies...',
+                prefixIcon: Icon(Icons.search),
+                border: OutlineInputBorder(),
+                isDense: true,
+              ),
+              onChanged: (values) {
+                debugPrint("Selected Technologies: $values");
+              },
+            ),
           ],
         ),
       ),
