@@ -46,20 +46,21 @@ Lightweight, flexible, and easy to integrate into any Flutter project.
 
 Below is a complete list of customizable properties available in the **`AdvancedDropdown`** widget.
 
-| Property | Type | Required | Default | Description |
-|-----------|------|-----------|----------|-------------|
-| **items** | `List<String>` | ✅ Yes | – | The list of items to display in the dropdown. |
-| **onChanged** | `Function(dynamic)` | ✅ Yes | – | Callback triggered when an item is selected. Returns a value or list depending on selection mode. |
-| **isSearch** | `bool` | ❌ No | `false` | Enables a search bar for filtering dropdown items. |
-| **isMultiSelect** | `bool` | ❌ No | `false` | Enables multiple selection with checkboxes. |
-| **decoration** | `BoxDecoration?` | ❌ No | `null` | Customizes the dropdown button (border, color, shape, etc.). |
-| **dropdownDecoration** | `BoxDecoration?` | ❌ No | `null` | Styles the dropdown list container. |
-| **inputDecoration** | `InputDecoration?` | ❌ No | `null` | Customizes the search text field decoration. |
-| **hintText** | `String?` | ❌ No | `"Select an option"` | The text shown when no item is selected. |
-| **selectedTextStyle** | `TextStyle?` | ❌ No | `null` | Custom text style for the selected item(s). |
-| **itemTextStyle** | `TextStyle?` | ❌ No | `null` | Custom text style for each dropdown item. |
-| **icon** | `Widget?` | ❌ No | `Icon(Icons.arrow_drop_down)` | Dropdown icon beside the button. |
-| **key** | `Key?` | ❌ No | `null` | Flutter widget key for testing or identification. |
+| Property                | Type                | Required | Default                       | Description                                                                                          |
+|-------------------------|---------------------|----------|-------------------------------|------------------------------------------------------------------------------------------------------|
+| **items**               | `List<String>`      | ✅ Yes    | –                             | The list of items to display in the dropdown.                                                        |
+| **onChanged**           | `Function(dynamic)` | ✅ Yes    | –                             | Callback triggered when an item is selected. Returns a value (single select) or list (multi select). |
+| **isSearch**            | `bool`              | ❌ No     | `false`                       | Enables a search bar for filtering dropdown items.                                                   |
+| **isMultiSelect**       | `bool`              | ❌ No     | `false`                       | Enables multiple selection with checkboxes and removable chips.                                      |
+| **decoration**          | `BoxDecoration?`    | ❌ No     | `null`                        | Customizes the main dropdown button (border, color, shape, etc.).                                    |
+| **dropdownDecoration**  | `BoxDecoration?`    | ❌ No     | `null`                        | Styles the dropdown popup list container.                                                            |
+| **inputDecoration**     | `InputDecoration?`  | ❌ No     | `null`                        | Customizes the search field’s look and behavior.                                                     |
+| **icon**                | `Icon?`             | ❌ No     | `Icon(Icons.arrow_drop_down)` | The dropdown icon displayed beside the button.                                                       |
+| **maxSelection**        | `int?`              | ❌ No     | `null`                        | Limits the number of selections in multi-select mode. Shows a SnackBar when exceeded.                |
+| **chipColor**           | `Color`             | ❌ No     | `Color(0xFFD0E6FF)`           | Background color of selected chips (multi-select).                                                   |
+| **chipTextColor**       | `Color`             | ❌ No     | `Colors.black`                | Text color inside chips.                                                                             |
+| **chipRemoveIconColor** | `Color`             | ❌ No     | `Colors.black54`              | Color of the remove (×) icon in chips.                                                               |
+| **key**                 | `Key?`              | ❌ No     | `null`                        | Widget key used for testing or identification.                                                       |
 
 ---
 
