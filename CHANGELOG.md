@@ -68,7 +68,15 @@
 
 ---
 
-## 1.0.9
+## 2.0.1
+
+🛠 **What new!!**
+- Max Selection Limit
+- Customizable Chips
+
+---
+
+## 2.0.2
 
 🛠 **Upcoming improvements**
 - [ ] Add generic type support (`CustomDropdown<T>`)
