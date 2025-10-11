@@ -9,21 +9,15 @@ class AdvancedDropdownDemo extends StatefulWidget {
 }
 
 class _AdvancedDropdownDemoState extends State<AdvancedDropdownDemo> {
-  // Example data sources
-  final List<Map<String, dynamic>> techList = [
-    {'id': 1, 'name': 'Flutter'},
-    {'id': 2, 'name': 'React'},
-    {'id': 3, 'name': 'Vue'},
-    {'id': 4, 'name': 'Angular'},
-  ];
+  // For single select
+  dynamic _selectedFruit;
 
-  final List<String> countryList = [
-    'Bangladesh',
-    'India',
-    'USA',
-    'Canada',
-    'Germany',
-  ];
+  // For multi select
+  List<dynamic> _selectedColors = [];
+
+  // For map-based dropdown
+  dynamic _selectedCountry;
+  List<dynamic> _selectedCities = [];
 
   @override
   Widget build(BuildContext context) {
@@ -34,101 +28,119 @@ class _AdvancedDropdownDemoState extends State<AdvancedDropdownDemo> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            /// 🔹 Single Select (with API data)
-            const Text("Single Select (API data)", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            AdvancedDropdown(
-              items: techList,
-              displayField: 'name',
-              valueField: 'id',
-              initialValue: 2,
-              onChanged: (value) {
-                debugPrint("Selected ID: $value");
-              },
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: Colors.blue.shade200),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              selectedTextStyle: const TextStyle(fontSize: 15, color: Colors.black87),
+
+            /// ---------------- SINGLE SELECT ----------------
+            const Text(
+              "Single Select Dropdown",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-
-            const SizedBox(height: 25),
-
-            /// 🔹 Multi Select with Chips + Max Limit
-            const Text("Multi Select with Chips & Limit", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
+
             AdvancedDropdown(
-              items: techList,
-              displayField: 'name',
-              valueField: 'id',
+              items: ['Apple', 'Banana', 'Cherry', 'Mango', 'Orange'],
+              initialValue: 'Cherry', // Preselected
+              onChanged: (value) {
+                setState(() => _selectedFruit = value);
+              },
+              hintText: "Select your favorite fruit",
+              hintStyle: const TextStyle(color: Colors.grey),
+              selectedTextStyle: const TextStyle(
+                color: Colors.blue,
+                fontWeight: FontWeight.w600,
+              ),
+              itemTextStyle: const TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 8),
+            Text("Selected: ${_selectedFruit ?? "None"}"),
+
+            const Divider(height: 40),
+
+            /// ---------------- MULTI SELECT ----------------
+            const Text(
+              "Multi Select Dropdown",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+
+            AdvancedDropdown(
+            isSearch: true,
+              items: ['Red', 'Blue', 'Green', 'Yellow', 'Black'],
               isMultiSelect: true,
-              isSearch: true,
-              maxSelection: 3,
-              initialValues: [1, 3], // preselected (backend)
-              chipColor: Colors.blue.shade100,
-              chipTextStyle: const TextStyle(color: Colors.black),
+              initialValues: [], // Preselected
               onChanged: (values) {
-                debugPrint("Selected IDs: $values");
+                setState(() => _selectedColors = values);
               },
-              dropdownDecoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.grey.shade300),
-              ),
-              icon: const Icon(Icons.expand_more, color: Colors.blue),
+              hintText: "Select colors",
+              chipColor: Colors.blue.shade100,
+              chipTextStyle: const TextStyle(fontWeight: FontWeight.bold),
             ),
-
-            const SizedBox(height: 25),
-
-            /// 🔹 String List (simple dropdown)
-            const Text("Simple String List", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
+            Text("Selected: ${_selectedColors.join(", ")}"),
+
+            const Divider(height: 40),
+
+            /// ---------------- MAP BASED DROPDOWN (SINGLE) ----------------
+            const Text(
+              "Map-based Dropdown (Single Select)",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+
             AdvancedDropdown(
-              items: countryList,
-              isSearch: true,
-              hintText: "Select a country",
+              items: const [
+                {'label': 'United States', 'value': 'US'},
+                {'label': 'Bangladesh', 'value': 'BD'},
+                {'label': 'India', 'value': 'IN'},
+                {'label': 'Germany', 'value': 'DE'},
+                {'label': 'Japan', 'value': 'JP'},
+              ],
+              labelBuilder: (item) => item['label'],
+              valueBuilder: (item) => item['value'],
+              initialValue: 'IN', // Preselected by value
               onChanged: (value) {
-                debugPrint("Selected Country: $value");
+                setState(() => _selectedCountry = value);
               },
-              inputDecoration: const InputDecoration(
-                hintText: 'Search country...',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
-                isDense: true,
+              hintText: "Select a country",
+              selectedTextStyle: const TextStyle(
+                color: Colors.teal,
+                fontWeight: FontWeight.w600,
               ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: Colors.grey.shade400),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              selectedTextStyle: const TextStyle(color: Colors.black87, fontSize: 15),
+              itemTextStyle: const TextStyle(fontSize: 16),
             ),
-
-            const SizedBox(height: 25),
-
-            // 🔹 Custom Styled Multi Select
-            const Text("Custom Styled Dropdown", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
+            Text("Selected Country: ${_selectedCountry ?? "None"}"),
+
+            const Divider(height: 40),
+
+            /// ---------------- MAP BASED DROPDOWN (MULTI) ----------------
+            const Text(
+              "Map-based Dropdown (Multi Select)",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+
             AdvancedDropdown(
-              items: techList,
-              displayField: 'name',
-              valueField: 'id',
+              items: const [
+                {'label': 'New York', 'value': 1},
+                {'label': 'London', 'value': 2},
+                {'label': 'Tokyo', 'value': 3},
+                {'label': 'Delhi', 'value': 4},
+              ],
               isMultiSelect: true,
-              isSearch: true,
+              labelBuilder: (item) => item['label'],
+              valueBuilder: (item) => item['value'],
+              initialValues: [1, 4], // Preselected by value
+              onChanged: (values) {
+                setState(() => _selectedCities = values);
+              },
+              hintText: "Select cities",
               chipColor: Colors.teal.shade100,
               chipTextStyle: const TextStyle(color: Colors.teal),
-              maxSelection: 4,
-              inputDecoration: const InputDecoration(
-                hintText: 'Search technologies...',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
-                isDense: true,
-              ),
-              onChanged: (values) {
-                debugPrint("Selected Technologies: $values");
-              },
             ),
+            const SizedBox(height: 8),
+            Text("Selected Cities IDs: ${_selectedCities.join(", ")}"),
+
+            const SizedBox(height: 40),
           ],
         ),
       ),

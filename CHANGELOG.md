@@ -87,3 +87,10 @@
 
 🛠 **What new!!**
 - Make the dropdown content dynamic
+
+---
+
+## 2.0.4
+
+🛠 **What new!!**
+- Major bug fixed

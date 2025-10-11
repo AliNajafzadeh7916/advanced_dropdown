@@ -30,70 +30,92 @@ import 'package:flutter/material.dart';
 /// )
 /// ```
 class AdvancedDropdown extends StatefulWidget {
-  /// Dropdown items (either `List<String>` or `List<Map<String, dynamic>>`)
+  /// List of items. Can be List<String>, List<dynamic>, or List<Map<String, dynamic>>
   final List<dynamic> items;
 
   /// Callback when selection changes
   final Function(dynamic) onChanged;
 
-  /// Enable multi-selection mode
-  final bool isMultiSelect;
-
-  /// Enable search field
+  /// Whether to enable the search bar inside dropdown
   final bool isSearch;
 
-  /// Optional field names when items are Map
-  final String? displayField;
-  final String? valueField;
+  /// Whether multiple selections are allowed
+  final bool isMultiSelect;
 
-  /// Preselected single value (for single-select mode)
-  final dynamic initialValue;
-
-  /// Preselected multiple values (for multi-select mode)
-  final List<dynamic>? initialValues;
-
-  /// Max selection limit (for multi-select)
-  final int? maxSelection;
-
-  /// Dropdown decorations
+  /// Optional decoration for the main dropdown button
   final BoxDecoration? decoration;
+
+  /// Optional decoration for the dropdown popup
   final BoxDecoration? dropdownDecoration;
+
+  /// Optional decoration for the search field
   final InputDecoration? inputDecoration;
 
-  /// Hint when nothing is selected
-  final String hintText;
+  /// Optional dropdown icon (default: arrow)
+  final Icon? icon;
 
-  /// Chip customization (for multi-select)
-  final Color? chipColor;
-  final TextStyle? chipTextStyle;
+  /// Maximum number of items that can be selected in multi-select
+  final int? maxSelection;
 
-  /// Text customization
-  final TextStyle? selectedTextStyle;
+  /// Background color of selected chips (for multi-select)
+  final Color chipColor;
+
+  /// Text color of selected chips
+  final Color chipTextColor;
+
+  /// Remove (×) icon color for chips
+  final Color chipRemoveIconColor;
+
+  /// Label extractor for custom map items
+  final String Function(dynamic)? labelBuilder;
+
+  /// Value extractor for custom map items
+  final dynamic Function(dynamic)? valueBuilder;
+
+  /// Initial value for single-select
+  final dynamic initialValue;
+
+  /// Initial values for multi-select
+  final List<dynamic>? initialValues;
+
+  /// Hint text for unselected dropdown
+  final String? hintText;
+
+  /// Text style for hint text
+  final TextStyle? hintStyle;
+
+  /// Text style for dropdown list items
   final TextStyle? itemTextStyle;
 
-  /// Dropdown icon
-  final Widget? icon;
+  /// Text style for selected value (single select)
+  final TextStyle? selectedTextStyle;
+
+  /// Text style for chips (multi select)
+  final TextStyle? chipTextStyle;
 
   const AdvancedDropdown({
     super.key,
     required this.items,
     required this.onChanged,
-    this.isMultiSelect = false,
     this.isSearch = false,
-    this.displayField,
-    this.valueField,
-    this.initialValue,
-    this.initialValues,
-    this.maxSelection,
+    this.isMultiSelect = false,
+    this.inputDecoration,
     this.decoration,
     this.dropdownDecoration,
-    this.inputDecoration,
-    this.hintText = "Select an option",
-    this.chipColor,
-    this.chipTextStyle,
-    this.selectedTextStyle,
-    this.itemTextStyle,
     this.icon,
+    this.maxSelection,
+    this.labelBuilder,
+    this.valueBuilder,
+    this.initialValue,
+    this.initialValues,
+    this.hintText,
+    this.hintStyle,
+    this.itemTextStyle,
+    this.selectedTextStyle,
+    this.chipTextStyle,
+    this.chipColor = const Color(0xFFD0E6FF),
+    this.chipTextColor = Colors.black,
+    this.chipRemoveIconColor = Colors.black54,
   });
 
   @override
@@ -103,49 +125,34 @@ class AdvancedDropdown extends StatefulWidget {
 class _AdvancedDropdownState extends State<AdvancedDropdown> {
   final LayerLink _layerLink = LayerLink();
   OverlayEntry? _overlayEntry;
-  String _searchText = '';
 
-  dynamic _selectedValue; // For single select
-  List<dynamic> _selectedValues = []; // For multi select
+  String? _selectedLabel; // for single select
+  final List<String> _selectedLabels = []; // for multi select
+  String _searchText = '';
 
   @override
   void initState() {
     super.initState();
-    // Load initial selected items
+    // Handle preselected values
     if (widget.isMultiSelect && widget.initialValues != null) {
-      _selectedValues = List.from(widget.initialValues!);
+      _selectedLabels.addAll(
+        widget.initialValues!.map((v) {
+          final item = widget.items.firstWhere(
+            (it) => _getValue(it) == v,
+            orElse: () => null,
+          );
+          return item != null ? _getLabel(item) : v.toString();
+        }),
+      );
     } else if (!widget.isMultiSelect && widget.initialValue != null) {
-      _selectedValue = widget.initialValue;
+      final item = widget.items.firstWhere(
+        (it) => _getValue(it) == widget.initialValue,
+        orElse: () => null,
+      );
+      _selectedLabel = item != null ? _getLabel(item) : widget.initialValue.toString();
     }
   }
 
-  /// Extracts display text for any type (Map or String)
-  String _getDisplayText(dynamic item) {
-    if (item is Map && widget.displayField != null) {
-      return item[widget.displayField].toString();
-    }
-    return item.toString();
-  }
-
-  /// Extracts comparable value (used for equality)
-  dynamic _getItemValue(dynamic item) {
-    if (item is Map && widget.valueField != null) {
-      return item[widget.valueField];
-    }
-    return item;
-  }
-
-  /// Check if the item is selected
-  bool _isItemSelected(dynamic item) {
-    final value = _getItemValue(item);
-    if (widget.isMultiSelect) {
-      return _selectedValues.contains(value);
-    } else {
-      return _selectedValue == value;
-    }
-  }
-
-  /// Toggle dropdown visibility
   void _toggleDropdown() {
     if (_overlayEntry == null) {
       _overlayEntry = _createOverlayEntry();
@@ -166,46 +173,12 @@ class _AdvancedDropdownState extends State<AdvancedDropdown> {
     Overlay.of(context).insert(_overlayEntry!);
   }
 
-  /// Handles single and multi selection
-  void _onItemSelect(dynamic item) {
-    final value = _getItemValue(item);
-    setState(() {
-      if (widget.isMultiSelect) {
-        // Handle multi-selection
-        if (_selectedValues.contains(value)) {
-          _selectedValues.remove(value);
-        } else {
-          // Check max limit
-          if (widget.maxSelection != null &&
-              _selectedValues.length >= widget.maxSelection!) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content:
-                    Text('You can select up to ${widget.maxSelection} items'),
-              ),
-            );
-            return;
-          }
-          _selectedValues.add(value);
-        }
-        widget.onChanged(_selectedValues);
-        _rebuildDropdown();
-      } else {
-        // Handle single-selection
-        _selectedValue = value;
-        widget.onChanged(value);
-        _closeDropdown();
-      }
-    });
-  }
-
-  /// Create overlay dropdown
   OverlayEntry _createOverlayEntry() {
     RenderBox renderBox = context.findRenderObject() as RenderBox;
     Size size = renderBox.size;
 
     final filteredItems = widget.items
-        .where((item) => _getDisplayText(item)
+        .where((item) => _getLabel(item)
             .toLowerCase()
             .contains(_searchText.toLowerCase()))
         .toList();
@@ -214,96 +187,164 @@ class _AdvancedDropdownState extends State<AdvancedDropdown> {
       builder: (context) => GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: _closeDropdown,
-        child: Material(
-          color: Colors.transparent,
-          child: Stack(
-            children: [
-              Positioned.fill(child: GestureDetector(onTap: _closeDropdown)),
-              CompositedTransformFollower(
-                link: _layerLink,
-                offset: Offset(0, size.height + 5),
-                showWhenUnlinked: false,
-                child: Material(
-                  elevation: 4,
-                  borderRadius: BorderRadius.circular(8),
-                  child: Container(
-                    width: size.width,
-                    decoration: widget.dropdownDecoration ??
-                        BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.grey.shade300),
-                        ),
-                    constraints:
-                        const BoxConstraints(maxHeight: 350, minHeight: 80),
-                    child: Column(
-                      children: [
-                        // Search Field
-                        if (widget.isSearch)
-                          Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: TextField(
-                              decoration: widget.inputDecoration ??
-                                  const InputDecoration(
-                                    hintText: 'Search...',
-                                    border: OutlineInputBorder(),
-                                    isDense: true,
-                                  ),
-                              onChanged: (val) {
-                                setState(() => _searchText = val);
-                                _rebuildDropdown();
-                              },
-                            ),
-                          ),
-                        // Item List
-                        Expanded(
-                          child: ListView(
-                            padding: EdgeInsets.zero,
-                            children: filteredItems.map((item) {
-                              final isSelected = _isItemSelected(item);
-                              return ListTile(
-                                title: Text(
-                                  _getDisplayText(item),
-                                  style: widget.itemTextStyle,
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: GestureDetector(
+                onTap: _closeDropdown,
+                child: Container(color: Colors.transparent),
+              ),
+            ),
+            CompositedTransformFollower(
+              link: _layerLink,
+              offset: Offset(0, size.height + 5),
+              showWhenUnlinked: false,
+              child: Material(
+                elevation: 4,
+                borderRadius: BorderRadius.circular(8),
+                child: Container(
+                  width: size.width,
+                  decoration: widget.dropdownDecoration ??
+                      BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.grey.shade300),
+                      ),
+                  constraints: const BoxConstraints(maxHeight: 400),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (widget.isSearch)
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextField(
+                            decoration: widget.inputDecoration ??
+                                const InputDecoration(
+                                  hintText: 'Search...',
+                                  border: OutlineInputBorder(),
+                                  isDense: true,
                                 ),
-                                trailing: widget.isMultiSelect
-                                    ? Checkbox(
-                                        value: isSelected,
-                                        onChanged: (_) => _onItemSelect(item),
-                                      )
-                                    : null,
-                                onTap: () => _onItemSelect(item),
-                              );
-                            }).toList(),
+                            onChanged: (val) {
+                              setState(() => _searchText = val);
+                              _rebuildDropdown();
+                            },
                           ),
                         ),
-                        // OK button for multi-select
-                        if (widget.isMultiSelect)
-                          Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: ElevatedButton(
-                              onPressed: _closeDropdown,
-                              child: const Text("OK"),
-                            ),
+                      Flexible(
+                        child: ListView(
+                          padding: EdgeInsets.zero,
+                          shrinkWrap: true,
+                          children: filteredItems.map((item) {
+                            final label = _getLabel(item);
+                            final value = _getValue(item);
+                            final isSelected =
+                                widget.isMultiSelect && _selectedLabels.contains(label);
+                            return ListTile(
+                              title: Text(label, style: widget.itemTextStyle),
+                              trailing: widget.isMultiSelect
+                                  ? Checkbox(
+                                      value: isSelected,
+                                      onChanged: (_) =>
+                                          _onItemSelect(value, label),
+                                    )
+                                  : null,
+                              onTap: () {
+                                if (!widget.isMultiSelect) {
+                                  _onItemSelect(value, label);
+                                }
+                              },
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                      if (widget.isMultiSelect)
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ElevatedButton(
+                            onPressed: _closeDropdown,
+                            child: const Text("OK"),
                           ),
-                      ],
-                    ),
+                        ),
+                    ],
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  /// Remove a chip (multi select)
-  void _removeChip(dynamic value) {
+  void _onItemSelect(dynamic value, String label) {
     setState(() {
-      _selectedValues.remove(value);
-      widget.onChanged(_selectedValues);
+      if (widget.isMultiSelect) {
+        if (_selectedLabels.contains(label)) {
+          _selectedLabels.remove(label);
+        } else {
+          if (widget.maxSelection != null &&
+              _selectedLabels.length >= widget.maxSelection!) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content:
+                    Text('You can select up to ${widget.maxSelection} items'),
+                duration: const Duration(seconds: 2),
+              ),
+            );
+            return;
+          }
+          _selectedLabels.add(label);
+        }
+        widget.onChanged(_selectedLabels
+            .map((lbl) => _getValue(widget.items
+                .firstWhere((it) => _getLabel(it) == lbl)))
+            .toList());
+        _rebuildDropdown();
+      } else {
+        _selectedLabel = label;
+        widget.onChanged(value);
+        _closeDropdown();
+      }
     });
+  }
+
+  String _getLabel(dynamic item) {
+    if (widget.labelBuilder != null) return widget.labelBuilder!(item);
+    if (item is Map && item.containsKey('label')) return item['label'].toString();
+    return item.toString();
+  }
+
+  dynamic _getValue(dynamic item) {
+    if (widget.valueBuilder != null) return widget.valueBuilder!(item);
+    if (item is Map && item.containsKey('value')) return item['value'];
+    return item;
+  }
+
+  Widget _buildChips() {
+    return Wrap(
+      spacing: 6,
+      runSpacing: -6,
+      children: _selectedLabels.map((item) {
+        return Chip(
+          label: Text(
+            item,
+            style: widget.chipTextStyle ??
+                TextStyle(color: widget.chipTextColor, fontSize: 14),
+          ),
+          backgroundColor: widget.chipColor,
+          deleteIcon: Icon(Icons.close, color: widget.chipRemoveIconColor),
+          onDeleted: () {
+            setState(() {
+              _selectedLabels.remove(item);
+              widget.onChanged(_selectedLabels
+                  .map((lbl) => _getValue(widget.items
+                      .firstWhere((it) => _getLabel(it) == lbl)))
+                  .toList());
+            });
+          },
+        );
+      }).toList(),
+    );
   }
 
   @override
@@ -316,58 +357,32 @@ class _AdvancedDropdownState extends State<AdvancedDropdown> {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: widget.decoration ??
               BoxDecoration(
-                color: Colors.white,
                 border: Border.all(color: Colors.grey.shade400),
                 borderRadius: BorderRadius.circular(8),
+                color: Colors.white,
               ),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Show selected chips for multi-select
               Expanded(
                 child: widget.isMultiSelect
-                    ? Wrap(
-                        spacing: 6,
-                        runSpacing: -8,
-                        children: _selectedValues.isEmpty
-                            ? [
-                                Text(
-                                  widget.hintText,
-                                  style: TextStyle(color: Colors.grey.shade600),
-                                )
-                              ]
-                            : _selectedValues.map((value) {
-                                final item = widget.items.firstWhere(
-                                  (i) => _getItemValue(i) == value,
-                                  orElse: () => null,
-                                );
-                                final text = item != null
-                                    ? _getDisplayText(item)
-                                    : value.toString();
-                                return Chip(
-                                  label: Text(
-                                    text,
-                                    style: widget.chipTextStyle ??
-                                        const TextStyle(fontSize: 13),
-                                  ),
-                                  backgroundColor: widget.chipColor ??
-                                      Colors.blue.shade100,
-                                  onDeleted: () => _removeChip(value),
-                                );
-                              }).toList(),
-                      )
+                    ? (_selectedLabels.isEmpty
+                        ? Text(
+                            widget.hintText ?? 'Select items',
+                            style: widget.hintStyle ??
+                                const TextStyle(color: Colors.grey),
+                          )
+                        : _buildChips())
                     : Text(
-                        _selectedValue != null
-                            ? _getDisplayText(widget.items.firstWhere(
-                                (i) => _getItemValue(i) == _selectedValue,
-                                orElse: () => _selectedValue))
-                            : widget.hintText,
-                        style: widget.selectedTextStyle ??
-                            TextStyle(color: Colors.grey.shade800),
-                        overflow: TextOverflow.ellipsis,
+                        _selectedLabel ?? (widget.hintText ?? 'Select item'),
+                        style: _selectedLabel == null
+                            ? (widget.hintStyle ??
+                                const TextStyle(color: Colors.grey))
+                            : widget.selectedTextStyle,
                       ),
               ),
-              widget.icon ??
-                  const Icon(Icons.arrow_drop_down, color: Colors.grey),
+              const SizedBox(width: 6),
+              widget.icon ?? const Icon(Icons.arrow_drop_down),
             ],
           ),
         ),
