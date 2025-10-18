@@ -15,7 +15,6 @@
 
 ## 1.0.2
 
-🛠 **New in this release**
 - Checkbox not selecting
 - Selected values showing below the dropdown instead of inside it
 - Dropdown does not close when clicking outside
@@ -24,14 +23,12 @@
 
 ## 1.0.3
 
-🛠 **What new!**
 - Add description
 
 ---
 
 ## 1.0.4
 
-🛠 **What new!!**
 - Fixed Overlay Redrawing
 - State Handling
 - Dropdown Handling
@@ -40,7 +37,6 @@
 
 ## 1.0.5
 
-🛠 **What new!!**
 - Dropdown popup overlaps the dropdown button
 - Checkbox does not reflect selection on first tap
 - Add "OK" button for multi-select dropdown
@@ -49,28 +45,24 @@
 
 ## 1.0.6
 
-🛠 **What new!!**
 - Added documentation
 
 ---
 
 ## 1.0.7
 
-🛠 **What new!!**
 - Add custom icon
 
 ---
 
 ## 1.0.8
 
-🛠 **What new!!**
 - Update documentation
 
 ---
 
 ## 2.0.1
 
-🛠 **What new!!**
 - Max Selection Limit
 - Customizable Chips
 
@@ -78,19 +70,23 @@
 
 ## 2.0.2
 
-🛠 **What new!!**
 - Added documentation
 
 ---
 
 ## 2.0.3
 
-🛠 **What new!!**
 - Make the dropdown content dynamic
 
 ---
 
 ## 2.0.4
 
-🛠 **What new!!**
 - Major bug fixed
+
+---
+
+## 2.0.5
+
+- Search field text not showing issue
+- Add example code

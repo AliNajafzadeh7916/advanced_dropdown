@@ -176,103 +176,109 @@ class _AdvancedDropdownState extends State<AdvancedDropdown> {
   OverlayEntry _createOverlayEntry() {
     RenderBox renderBox = context.findRenderObject() as RenderBox;
     Size size = renderBox.size;
-
-    final filteredItems = widget.items
-        .where((item) => _getLabel(item)
-            .toLowerCase()
-            .contains(_searchText.toLowerCase()))
-        .toList();
-
+  
     return OverlayEntry(
-      builder: (context) => GestureDetector(
-        behavior: HitTestBehavior.translucent,
-        onTap: _closeDropdown,
-        child: Stack(
-          children: [
-            Positioned.fill(
-              child: GestureDetector(
-                onTap: _closeDropdown,
-                child: Container(color: Colors.transparent),
+      builder: (context) {
+        return GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: _closeDropdown,
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: GestureDetector(
+                  onTap: _closeDropdown,
+                  child: Container(color: Colors.transparent),
+                ),
               ),
-            ),
-            CompositedTransformFollower(
-              link: _layerLink,
-              offset: Offset(0, size.height + 5),
-              showWhenUnlinked: false,
-              child: Material(
-                elevation: 4,
-                borderRadius: BorderRadius.circular(8),
-                child: Container(
-                  width: size.width,
-                  decoration: widget.dropdownDecoration ??
-                      BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.grey.shade300),
-                      ),
-                  constraints: const BoxConstraints(maxHeight: 400),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (widget.isSearch)
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: TextField(
-                            decoration: widget.inputDecoration ??
-                                const InputDecoration(
-                                  hintText: 'Search...',
-                                  border: OutlineInputBorder(),
-                                  isDense: true,
+              CompositedTransformFollower(
+                link: _layerLink,
+                offset: Offset(0, size.height + 5),
+                showWhenUnlinked: false,
+                child: Material(
+                  elevation: 4,
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    width: size.width,
+                    decoration: widget.dropdownDecoration ??
+                        BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.grey.shade300),
+                        ),
+                    constraints: const BoxConstraints(maxHeight: 400),
+                    child: StatefulBuilder(
+                      builder: (context, setInnerState) {
+                        final filteredItems = widget.items
+                            .where((item) => _getLabel(item)
+                                .toLowerCase()
+                                .contains(_searchText.toLowerCase()))
+                            .toList();
+  
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (widget.isSearch)
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: TextField(
+                                  style: const TextStyle(color: Colors.black),
+                                  decoration: widget.inputDecoration ??
+                                      const InputDecoration(
+                                        hintText: 'Search...',
+                                        border: OutlineInputBorder(),
+                                        isDense: true,
+                                      ),
+                                  onChanged: (val) {
+                                    setInnerState(() => _searchText = val);
+                                  },
                                 ),
-                            onChanged: (val) {
-                              setState(() => _searchText = val);
-                              _rebuildDropdown();
-                            },
-                          ),
-                        ),
-                      Flexible(
-                        child: ListView(
-                          padding: EdgeInsets.zero,
-                          shrinkWrap: true,
-                          children: filteredItems.map((item) {
-                            final label = _getLabel(item);
-                            final value = _getValue(item);
-                            final isSelected =
-                                widget.isMultiSelect && _selectedLabels.contains(label);
-                            return ListTile(
-                              title: Text(label, style: widget.itemTextStyle),
-                              trailing: widget.isMultiSelect
-                                  ? Checkbox(
-                                      value: isSelected,
-                                      onChanged: (_) =>
-                                          _onItemSelect(value, label),
-                                    )
-                                  : null,
-                              onTap: () {
-                                if (!widget.isMultiSelect) {
-                                  _onItemSelect(value, label);
-                                }
-                              },
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                      if (widget.isMultiSelect)
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: ElevatedButton(
-                            onPressed: _closeDropdown,
-                            child: const Text("OK"),
-                          ),
-                        ),
-                    ],
+                              ),
+                            Flexible(
+                              child: ListView(
+                                padding: EdgeInsets.zero,
+                                shrinkWrap: true,
+                                children: filteredItems.map((item) {
+                                  final label = _getLabel(item);
+                                  final value = _getValue(item);
+                                  final isSelected = widget.isMultiSelect &&
+                                      _selectedLabels.contains(label);
+                                  return ListTile(
+                                    title: Text(label, style: widget.itemTextStyle),
+                                    trailing: widget.isMultiSelect
+                                        ? Checkbox(
+                                            value: isSelected,
+                                            onChanged: (_) =>
+                                                _onItemSelect(value, label),
+                                          )
+                                        : null,
+                                    onTap: () {
+                                      if (!widget.isMultiSelect) {
+                                        _onItemSelect(value, label);
+                                      }
+                                    },
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                            if (widget.isMultiSelect)
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ElevatedButton(
+                                  onPressed: _closeDropdown,
+                                  child: const Text("OK"),
+                                ),
+                              ),
+                          ],
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
-      ),
+            ],
+          ),
+        );
+      },
     );
   }
 
