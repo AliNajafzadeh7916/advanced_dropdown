@@ -224,7 +224,7 @@ class _AdvancedDropdownState extends State<AdvancedDropdown> {
                                   style: const TextStyle(color: Colors.black),
                                   decoration: widget.inputDecoration ??
                                       const InputDecoration(
-                                        hintText: 'Search...',
+                                        hintText: 'جستجو...',
                                         border: OutlineInputBorder(),
                                         isDense: true,
                                       ),
@@ -265,7 +265,7 @@ class _AdvancedDropdownState extends State<AdvancedDropdown> {
                                 padding: const EdgeInsets.all(8.0),
                                 child: ElevatedButton(
                                   onPressed: _closeDropdown,
-                                  child: const Text("OK"),
+                                  child: const Text("تایید"),
                                 ),
                               ),
                           ],
@@ -293,7 +293,7 @@ class _AdvancedDropdownState extends State<AdvancedDropdown> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content:
-                    Text('You can select up to ${widget.maxSelection} items'),
+                    Text('شما نمی توانید بیشتر از ${widget.maxSelection} مورد انتخاب نمایید'),
                 duration: const Duration(seconds: 2),
               ),
             );
@@ -374,13 +374,13 @@ class _AdvancedDropdownState extends State<AdvancedDropdown> {
                 child: widget.isMultiSelect
                     ? (_selectedLabels.isEmpty
                         ? Text(
-                            widget.hintText ?? 'Select items',
+                            widget.hintText ?? 'انتخاب آیتم',
                             style: widget.hintStyle ??
                                 const TextStyle(color: Colors.grey),
                           )
                         : _buildChips())
                     : Text(
-                        _selectedLabel ?? (widget.hintText ?? 'Select item'),
+                        _selectedLabel ?? (widget.hintText ?? 'انتخاب نمایید'),
                         style: _selectedLabel == null
                             ? (widget.hintStyle ??
                                 const TextStyle(color: Colors.grey))
